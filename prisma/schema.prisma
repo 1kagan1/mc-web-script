@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Admin user model
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Site settings model
+model Settings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String
+  description String?
+  updatedAt   DateTime @updatedAt
+}
+
+// Products model
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  tag         String
+  category    String   @default("vip")
+  imageUrl    String?
+  active      Boolean  @default(true)
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orders      Order[]
+}
+
+// News model
+model News {
+  id        String   @id @default(cuid())
+  title     String
+  excerpt   String
+  content   String
+  imageUrl  String?
+  tag       String   @default("Duyuru")
+  published Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// User model (for customers)
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  username  String   @unique
+  credits   Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+  creditTransactions CreditTransaction[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+// Order model
+model Order {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  productName   String?
+  amount        Int
+  paymentMethod String   @default("credits") // "credits", "iyzico", "stripe", "paytr"
+  status        String   @default("pending")
+  paymentId     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// License model (for script protection)
+model License {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  domain      String
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Admin login audit log
+model AdminLoginLog {
+  id             String   @id @default(cuid())
+  emailAttempted String
+  ip             String?
+  userAgent      String?
+  success        Boolean
+  reason         String?
+  createdAt      DateTime @default(now())
+}
+
+// Credit transaction log
+model CreditTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  type      String   // "add", "subtract", "purchase", "refund"
+  reason    String?
+  reference String?  // order id, admin action, etc
+  balance   Int      // balance after transaction
+  createdAt DateTime @default(now())
+}
+
+// Password reset tokens
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
