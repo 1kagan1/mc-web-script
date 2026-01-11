@@ -1,13 +1,5 @@
 {
   "buildCommand": "npm run build",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "env": {
-    "DATABASE_URL": "@database_url",
-    "JWT_SECRET": "@jwt_secret",
-    "NEXT_PUBLIC_BASE_URL": "@next_public_base_url",
-    "RESEND_API_KEY": "@resend_api_key",
-    "EMAIL_FROM": "@email_from",
-    "MC_API_KEY": "@mc_api_key"
-  }
+  "framework": "nextjs"
 }
