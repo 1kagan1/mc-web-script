@@ -17,19 +17,24 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params;
     const body = await request.json();
+    const priceInt = Number.parseInt(body.price, 10);
+    if (!Number.isFinite(priceInt) || priceInt < 0) {
+      return NextResponse.json({ error: 'Fiyat geçersiz (tam sayı girin)' }, { status: 400 });
+    }
     const product = await prisma.product.update({
       where: { id },
       data: {
-        name: body.name,
-        description: body.description,
-        price: body.price,
-        tag: body.tag,
-        category: body.category,
+        name: String(body.name),
+        description: String(body.description),
+        price: priceInt,
+        tag: body.tag || 'POPÜLER',
+        category: body.category || 'Credit',
         active: body.active ?? true,
       },
     });
     return NextResponse.json(product);
   } catch (error) {
+    console.error('Product update error:', error);
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
   }
 }
