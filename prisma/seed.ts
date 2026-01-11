@@ -46,7 +46,7 @@ async function main() {
       description: 'Uçma, renkli prefix, haftalık kasa',
       price: 229,
       tag: 'Popüler',
-      category: 'vip',
+      category: 'VIP Üyelikler',
       order: 1,
     },
     {
@@ -54,7 +54,7 @@ async function main() {
       description: '5 anahtar, %10 kozmetik drop, Legendary şansı',
       price: 119,
       tag: 'Yeni',
-      category: 'crate',
+      category: 'Kutular',
       order: 2,
     },
     {
@@ -62,7 +62,7 @@ async function main() {
       description: 'Anında bakiye, takaslanabilir, pazar uyumlu',
       price: 179,
       tag: 'Hızlı Teslim',
-      category: 'currency',
+      category: 'Credit',
       order: 3,
     },
   ];
