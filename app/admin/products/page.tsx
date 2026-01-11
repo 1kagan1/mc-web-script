@@ -2,6 +2,10 @@ import { prisma } from '@/lib/prisma';
 import Link from 'next/link';
 import DeleteButton from './DeleteButton';
 
+// Always fetch fresh data (no static cache) so newly added products show up immediately
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 async function getProducts() {
   return await prisma.product.findMany({
     orderBy: { createdAt: 'desc' }
