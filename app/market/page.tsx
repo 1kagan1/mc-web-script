@@ -11,11 +11,19 @@ type Product = {
 };
 
 function resolveBaseUrl() {
-  const envUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.SITE_URL || process.env.VERCEL_URL;
-  if (envUrl) {
-    const hasProtocol = envUrl.startsWith('http://') || envUrl.startsWith('https://');
-    return hasProtocol ? envUrl : `https://${envUrl}`;
+  // Prefer Vercel URL in production to avoid hitting localhost in serverless
+  const vercelUrl = process.env.VERCEL_URL;
+  const envUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.SITE_URL;
+
+  const raw = process.env.NODE_ENV === 'production'
+    ? vercelUrl || envUrl
+    : envUrl || vercelUrl;
+
+  if (raw) {
+    const hasProtocol = raw.startsWith('http://') || raw.startsWith('https://');
+    return hasProtocol ? raw : `https://${raw}`;
   }
+
   return 'http://localhost:3000';
 }
 
